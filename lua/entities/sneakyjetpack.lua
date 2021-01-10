@@ -938,7 +938,7 @@ function ENT:OnRemove()
 			self.JetpackParticleEmitter = nil
 		end
 	end
-	
+
 	self:GetOwner().isActive = true
 
 	BaseClass.OnRemove( self )

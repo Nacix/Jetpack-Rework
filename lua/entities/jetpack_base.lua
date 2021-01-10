@@ -83,7 +83,7 @@ function ENT:DefineNWVar( dttype , dtname , editable , beautifulname , minval , 
 		end
 
 		if index == -1 then
-			Error( "Not enough slots on "..dttype .. ",	could not add ".. dtname )
+			Error( "Not enough slots on " .. dttype .. ",	could not add " .. dtname )
 			return
 		end
 	else
@@ -226,7 +226,7 @@ function ENT:Initialize()
 		self:InstallHook( "NotifyShouldTransmit" , self.HandleFullPacketUpdate , self.HookAlways )
 
 		language.Add( self:GetClass() , self.PrintName )
-		language.Add( "dropped_"..self:GetClass() , "Dropped "..self.PrintName )
+		language.Add( "dropped_" .. self:GetClass() , "Dropped " .. self.PrintName )
 	end
 end
 
@@ -284,10 +284,8 @@ function ENT:Think()
 	if SERVER then
 
 		--check if this guy is still my parent and owner, maybe something is forcibly unparenting us from him, if so, drop
-		if self.AttachesToPlayer and self:IsCarried() then
-			if not self:IsAttached() then
-				self:Remove( true )
-			end
+		if self.AttachesToPlayer and self:IsCarried() and not self:IsAttached() then
+			self:Remove( true )
 		end
 
 		--we have to network this ourselves since it's based on the physics object ( which is mainly serverside )
@@ -713,7 +711,7 @@ else
 
 		if not self.ConfigurableConVar then
 			--internally this returns the original convar if it was already created, so it's not that big of a deal, this could be done in a better way however
-			self.ConfigurableConVar = CreateConVar( self:GetConVarName() , self:GetKey() , FCVAR_ARCHIVE + FCVAR_USERINFO , "Configures the key for "..self:GetSlotName().. " , created by "..self:GetClass() )
+			self.ConfigurableConVar = CreateConVar( self:GetConVarName() , self:GetKey() , FCVAR_ARCHIVE + FCVAR_USERINFO , "Configures the key for " .. self:GetSlotName() .. " , created by " .. self:GetClass() )
 		end
 
 		return self.ConfigurableConVar
@@ -1003,7 +1001,7 @@ function ENT:IsKeyAllowed( btn )
 end
 
 function ENT:GetConVarName()
-	return "prdent_key_"..self:GetSlotName()
+	return "prdent_key_" .. self:GetSlotName()
 end
 
 function ENT:GetControllingPlayerConVarKey()
@@ -1245,7 +1243,7 @@ function ENT:RestoreMoveData( mv , sv )
 
 	--restore the values from the table, prevents duplicated code by using the setters from the metatable directly
 	for i , v in pairs( sv ) do
-		local setter = movedatameta["Set"..i]
+		local setter = movedatameta["Set" .. i]
 		if setter then
 			setter( mv , v )
 		end
@@ -1411,7 +1409,7 @@ if SERVER then
 			return
 		end
 
-		local slotent = GetPredictedEntityOnPlayer( ply , nwslot )--ply:GetNWEntity( nwslot )
+		local slotent = GetPredictedEntityOnPlayer( ply , nwslot ) -- ply:GetNWEntity( nwslot )
 
 		--user tried to drop an invalid or an entity which is not a predicted entity, or doesn't have a slot assigned
 

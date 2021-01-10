@@ -37,7 +37,7 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Initialize()
-	self:SetHoldType( "normal" )
+	self:SetHoldType( 'normal' )
 	--self:GetOwner().isActive = true
 end
 
@@ -47,7 +47,7 @@ end
 function SWEP:PrimaryAttack()
 	if CLIENT then return end
 		local ply = self:GetOwner()
-		local ex = ply:GetNWEntity('Jetted')
+		local ex = ply:GetNWEntity( 'Jetted' )
 		if IsValid(ex) then
 			ex:Remove()
 			ply:SetNWEntity('Jetted',NULL)

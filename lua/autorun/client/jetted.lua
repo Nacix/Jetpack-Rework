@@ -1,4 +1,4 @@
-surface.CreateFont('Jetted',{font='Trebuchet MS',size=48,weight=400})
+surface.CreateFont('Jetted', {font = 'Trebuchet MS', size = 48, weight = 400})
 
 local function DrawRect(col,x,y,w,h)
 	x, y = math.Round(x), math.Round(y)
@@ -15,10 +15,10 @@ local function DrawText(...)
 		if istable(aye[i]) then
 			surface.SetTextColor(aye[i])
 		else
-			surface.SetTextPos(aye[2]+oldx,aye[3])
+			surface.SetTextPos(aye[2] + oldx,aye[3])
 			surface.DrawText(tostring(aye[i]))
 			local _ox, _oy = surface.GetTextSize(tostring(aye[i]))
-			oldx, oldy = oldx+_ox, oldy+_oy
+			oldx, oldy = oldx + _ox, oldy + _oy
 		end
 	end
 end
@@ -52,10 +52,10 @@ end)
 
 hook.Add('HUDPaint','jetted',function()
 	if !IsValid(jet) then return end
-	local percent = math.floor(cf/mf*100)
-	DrawRect(col_bg,MSW/2-fuelbarwidth/2,MSH-fuelbarheigth*1.4,fuelbarwidth,fuelbarheigth)
-	DrawRect(col_fuel,MSW/2-fuelbarwidth/2+4,MSH-fuelbarheigth*1.4+4,(fuelbarwidth-8)*percent/100,fuelbarheigth-8)
-	DrawText('Jetted',MSW/2-fuelbarwidth/2+12,MSH-fuelbarheigth*1.4,col_txt,'FUEL: '..percent..'%')
+	local percent = math.floor(cf / mf * 100)
+	DrawRect(col_bg,MSW / 2-fuelbarwidth / 2,MSH-fuelbarheigth * 1.4,fuelbarwidth,fuelbarheigth)
+	DrawRect(col_fuel,MSW / 2-fuelbarwidth / 2 + 4,MSH-fuelbarheigth * 1.4 + 4,(fuelbarwidth-8) * percent / 100,fuelbarheigth - 8)
+	DrawText('Jetted',MSW / 2-fuelbarwidth / 2 + 12,MSH-fuelbarheigth * 1.4,col_txt,'FUEL: ' .. percent .. '%')
 end)
 
 
