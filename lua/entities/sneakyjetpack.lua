@@ -18,8 +18,8 @@ DEFINE_BASECLASS( "jetpack_base" )
 			end
 		end)
 	end)
---]]	
-	
+--]]
+
 ENT.Spawnable = false
 ENT.PrintName = "Sneaky's Jetpack"
 
@@ -93,12 +93,10 @@ function ENT:SpawnFunction( ply, tr, ClassName )
 	ent:Spawn()
 
 	--try equipping it, if we can't we'll just remove it
-	if not self.SpawnOnGroundConVar:GetBool() then
-		--forced should not be set here, as we still kinda want the equip logic to work as normal
-		if not ent:Attach( ply , false ) then
-			ent:Remove()
-			return
-		end
+	--forced should not be set here, as we still kinda want the equip logic to work as normal
+	if not self.SpawnOnGroundConVar:GetBool() and not ent:Attach( ply , false ) then
+		ent:Remove()
+		return
 	end
 
 	return ent
@@ -118,7 +116,7 @@ function ENT:Initialize()
 		self:SetMaxFuel(100)
 		self:SetFuel( self:GetMaxFuel() )
 		self:SetFuelDrain(15)	--drain in seconds
-		self:SetFuelRecharge( 0 )	--recharge in seconds
+		self:SetFuelRecharge(20)	--recharge in seconds
 		self:SetActive( false )
 		self:SetCanStomp( false )
 		self:SetDoGroundSlam( false )
@@ -171,10 +169,8 @@ function ENT:HandleFly( predicted , owner , movedata , usercmd )
 		--this is most useful because I CBA to do that everytime ok?
 		--also it's serverside only because we only set the apeshit on the server anyway
 
-		if SERVER then
-			if self:GetGoneApeshit() and self:GetGoneApeshitTime() == 0 and self:GetInfiniteFuel() then
+		if SERVER and self:GetGoneApeshit() and self:GetGoneApeshitTime() == 0 and self:GetInfiniteFuel() then
 				self:SetGoneApeshitTime( CurTime() + 5 )
-			end
 		end
 
 		--the check below has to be done with prediction on the client!
@@ -292,7 +288,7 @@ function ENT:CanFly( owner , mv )
 
 	if IsValid( owner ) and owner.isActive then
 
-		--don't care about player inputs in this case, the player's jetpack is going craaazy
+		-- don't care about player inputs in this case, the player's jetpack is going craaazy
 
 		if self:GetGoneApeshit() then
 			return owner:WaterLevel() == 0 and owner:GetMoveType() == MOVETYPE_WALK and self:HasFuel()
@@ -311,11 +307,11 @@ end
 
 --ENT.isActive = true
 
+-- holy dog shit this is gross what was I thinking (fix later too lazy rn)
 function ENT:Think()
 	hook.Add( "PlayerButtonDown", "PlayerButtonDownWikiExample", function( ply, button )
-		if button == KEY_CAPSLOCK then
-			if IsFirstTimePredicted() and ply:IsValid() and ply:HasWeapon('csg_jetpack') and ply:GetNWEntity('Jetted') != NULL then 
-				ply.isActive = !ply.isActive
+		if button == KEY_CAPSLOCK and IsFirstTimePredicted() and ply:IsValid() and ply:HasWeapon('csg_jetpack') and ply:GetNWEntity('Jetted') != NULL then
+				ply.isActive = not ply.isActive
 				if not ply.isActive then self:SetActive(false) end
 				if CLIENT or game.SinglePlayer() then
 					if !game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) else ply:EmitSound( "buttons/blip1.wav" ) end
@@ -325,7 +321,6 @@ function ENT:Think()
 						ply:ChatPrint('Jetpack Enabled!')
 					end
 				end
-			end 
 		end
 	end)
 
@@ -333,7 +328,7 @@ function ENT:Think()
 hook.Add( "KeyPress", "keypress_use_hi", function( ply, key )
 	if not IsFirstTimePredicted() then return end
 	if ( key == IN_RELOAD and ply:GetActiveWeapon():GetClass() == "csg_jetpack" and ply:GetNWEntity('Jetted') != NULL ) then
-		if self:GetFuelDrain() == 15 then 
+		if self:GetFuelDrain() == 15 then
 			if CLIENT or game.SinglePlayer() then ply:ChatPrint('Mode: Overclock') end
 			self:SetFuelDrain( 3 )
 			self:SetJetpackSpeed( 6500 )
@@ -355,7 +350,7 @@ hook.Add( "KeyPress", "keypress_use_hi", function( ply, key )
 			self:SetJetpackVelocity( 1200 )
 			self:SetJetpackStrafeVelocity( 5000 )
 		end
-		if CLIENT and !game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) else ply:EmitSound( "buttons/blip1.wav" ) end
+		if CLIENT and not game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) else ply:EmitSound( "buttons/blip1.wav" ) end
 	end
 end )
 
