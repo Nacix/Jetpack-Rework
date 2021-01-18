@@ -116,7 +116,7 @@ function ENT:Initialize()
 		self:SetMaxFuel(100)
 		self:SetFuel( self:GetMaxFuel() )
 		self:SetFuelDrain(15)	--drain in seconds
-		self:SetFuelRecharge(20)	--recharge in seconds
+		self:SetFuelRecharge(17)	--recharge in seconds
 		self:SetActive( false )
 		self:SetCanStomp( false )
 		self:SetDoGroundSlam( false )
