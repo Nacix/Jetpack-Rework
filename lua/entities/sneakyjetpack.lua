@@ -285,7 +285,6 @@ end
 
 function ENT:CanFly( owner , mv )
 
-
 	if IsValid( owner ) and owner.isActive then
 
 		-- don't care about player inputs in this case, the player's jetpack is going craaazy
@@ -305,16 +304,17 @@ function ENT:CanFly( owner , mv )
 	return false
 end
 
---ENT.isActive = true
-
 -- holy dog shit this is gross what was I thinking (fix later too lazy rn)
 function ENT:Think()
+	if self:GetOwner().isActive == nil then
+		self:GetOwner().isActive = true
+	end
 	hook.Add( "PlayerButtonDown", "PlayerButtonDownWikiExample", function( ply, button )
 		if button == KEY_CAPSLOCK and IsFirstTimePredicted() and ply:IsValid() and ply:HasWeapon('csg_jetpack') and ply:GetNWEntity('Jetted') != NULL then
 				ply.isActive = not ply.isActive
 				if not ply.isActive then self:SetActive(false) end
 				if CLIENT or game.SinglePlayer() then
-					if !game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) else ply:EmitSound( "buttons/blip1.wav" ) end
+					if CLIENT or game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) end
 					if ply.isActive == false then
 						ply:ChatPrint('Jetpack Disabled!')
 					else
@@ -350,7 +350,7 @@ hook.Add( "KeyPress", "keypress_use_hi", function( ply, key )
 			self:SetJetpackVelocity( 1200 )
 			self:SetJetpackStrafeVelocity( 5000 )
 		end
-		if CLIENT and not game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) else ply:EmitSound( "buttons/blip1.wav" ) end
+		if CLIENT or game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) end
 	end
 end )
 
