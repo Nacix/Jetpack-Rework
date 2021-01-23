@@ -27,7 +27,6 @@ if CLIENT then
 	ENT.MatHeatWave		= Material( "sprites/heatwave" )
 	ENT.MatFire			= Material( "effects/fire_cloud1" )
 
-
 	AccessorFunc( ENT , "NextParticle" , "NextParticle" )
 	AccessorFunc( ENT , "LastActive" , "LastActive" )
 	AccessorFunc( ENT , "LastFlameTrace" , "LastFlameTrace" )
@@ -165,9 +164,6 @@ function ENT:HandleFly( predicted , owner , movedata , usercmd )
 		else
 			self:SetActive( false )
 		end
-		--we have infinite fuel and the apeshit timeout hasn't been set, do it now
-		--this is most useful because I CBA to do that everytime ok?
-		--also it's serverside only because we only set the apeshit on the server anyway
 
 		if SERVER and self:GetGoneApeshit() and self:GetGoneApeshitTime() == 0 and self:GetInfiniteFuel() then
 				self:SetGoneApeshitTime( CurTime() + 5 )
@@ -314,7 +310,7 @@ function ENT:Think()
 				ply.isActive = not ply.isActive
 				if not ply.isActive then self:SetActive(false) end
 				if CLIENT or game.SinglePlayer() then
-					if CLIENT or game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) end
+					if CLIENT then surface.PlaySound( "buttons/blip1.wav" ) elseif SERVER then ply:EmitSound( "buttons/blip1.wav" ) end
 					if ply.isActive == false then
 						ply:ChatPrint('Jetpack Disabled!')
 					else
@@ -325,34 +321,6 @@ function ENT:Think()
 	end)
 
 -- Reload KeyPress hook allows for easily customizable jetpack profiles.
-hook.Add( "KeyPress", "keypress_use_hi", function( ply, key )
-	if not IsFirstTimePredicted() then return end
-	if ( key == IN_RELOAD and ply:GetActiveWeapon():GetClass() == "csg_jetpack" and ply:GetNWEntity('Jetted') != NULL ) then
-		if self:GetFuelDrain() == 15 then
-			if CLIENT or game.SinglePlayer() then ply:ChatPrint('Mode: Overclock') end
-			self:SetFuelDrain( 3 )
-			self:SetJetpackSpeed( 6500 )
-			self:SetJetpackStrafeSpeed( 750 )
-			self:SetJetpackVelocity( 1600 )
-			self:SetJetpackStrafeVelocity( 6250 )
-		elseif self:GetFuelDrain() == 3 then
-			if CLIENT or game.SinglePlayer() then ply:ChatPrint('Mode: Underclock') end
-			self:SetFuelDrain(25)
-			self:SetJetpackSpeed( 2500 )
-			self:SetJetpackStrafeSpeed( 300 )
-			self:SetJetpackVelocity( 800 )
-			self:SetJetpackStrafeVelocity( 2500 )
-		else
-			if CLIENT or game.SinglePlayer() then ply:ChatPrint('Mode: Standard') end
-			self:SetFuelDrain(15)
-			self:SetJetpackSpeed( 5000 )
-			self:SetJetpackStrafeSpeed( 600 )
-			self:SetJetpackVelocity( 1200 )
-			self:SetJetpackStrafeVelocity( 5000 )
-		end
-		if CLIENT or game.SinglePlayer() then surface.PlaySound( "buttons/blip1.wav" ) end
-	end
-end )
 
 	--still act if we're not being held by a player
 	if not self:IsCarried() then
@@ -468,6 +436,34 @@ function ENT:PredictedSetupMove( owner , mv , usercmd )
 end
 
 function ENT:PredictedThink( owner , movedata )
+	hook.Add( "PlayerButtonDown", "OnReload", function( ply, button )
+		if ply:GetNWEntity('Jetted') == NULL then return end
+		if ( IsFirstTimePredicted() and button == KEY_R and ply:GetActiveWeapon():GetClass() == "csg_jetpack" and ply:GetNWEntity('Jetted') != NULL ) then
+				if self:GetFuelDrain() == 15 then
+					if CLIENT then ply:ChatPrint('Mode: Overclock') end
+					self:SetFuelDrain( 3 )
+					self:SetJetpackSpeed( 6500 )
+					self:SetJetpackStrafeSpeed( 750 )
+					self:SetJetpackVelocity( 1600 )
+					self:SetJetpackStrafeVelocity( 6250 )
+				elseif self:GetFuelDrain() == 3 then
+					if CLIENT then ply:ChatPrint('Mode: Underclock') end
+					self:SetFuelDrain(25)
+					self:SetJetpackSpeed( 2500 )
+					self:SetJetpackStrafeSpeed( 300 )
+					self:SetJetpackVelocity( 800 )
+					self:SetJetpackStrafeVelocity( 2500 )
+				else
+					if CLIENT then ply:ChatPrint('Mode: Standard') end
+					self:SetFuelDrain(15)
+					self:SetJetpackSpeed( 5000 )
+					self:SetJetpackStrafeSpeed( 600 )
+					self:SetJetpackVelocity( 1200 )
+					self:SetJetpackStrafeVelocity( 5000 )
+				end
+			if CLIENT then surface.PlaySound( "buttons/blip1.wav" ) elseif game.SinglePlayer() then ply:EmitSound( "buttons/blip1.wav" ) end
+		end
+	end )
 end
 
 function ENT:PredictedMove( owner , data )
