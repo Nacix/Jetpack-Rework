@@ -305,20 +305,6 @@ function ENT:Think()
 	if self:GetOwner().isActive == nil then
 		self:GetOwner().isActive = true
 	end
-	hook.Add( "PlayerButtonDown", "PlayerButtonDownWikiExample", function( ply, button )
-		if button == KEY_CAPSLOCK and IsFirstTimePredicted() and ply:IsValid() and ply:HasWeapon('csg_jetpack') and ply:GetNWEntity('Jetted') != NULL then
-				ply.isActive = not ply.isActive
-				if not ply.isActive then self:SetActive(false) end
-				if CLIENT or game.SinglePlayer() then
-					if CLIENT then surface.PlaySound( "buttons/blip1.wav" ) elseif SERVER then ply:EmitSound( "buttons/blip1.wav" ) end
-					if ply.isActive == false then
-						ply:ChatPrint('Jetpack Disabled!')
-					else
-						ply:ChatPrint('Jetpack Enabled!')
-					end
-				end
-		end
-	end)
 
 -- Reload KeyPress hook allows for easily customizable jetpack profiles.
 
@@ -464,6 +450,21 @@ function ENT:PredictedThink( owner , movedata )
 			if CLIENT then surface.PlaySound( "buttons/blip1.wav" ) elseif game.SinglePlayer() then ply:EmitSound( "buttons/blip1.wav" ) end
 		end
 	end )
+
+	hook.Add( "PlayerButtonDown", "PlayerButtonDownWikiExample", function( ply, button )
+		if button == KEY_CAPSLOCK and IsFirstTimePredicted() and ply:IsValid() and ply:HasWeapon('csg_jetpack') and ply:GetNWEntity('Jetted') != NULL then
+				ply.isActive = not ply.isActive
+				if not ply.isActive then self:SetActive(false) end
+				if CLIENT or game.SinglePlayer() then
+					if CLIENT then surface.PlaySound( "buttons/blip1.wav" ) elseif SERVER then ply:EmitSound( "buttons/blip1.wav" ) end
+					if ply.isActive == false then
+						ply:ChatPrint('Jetpack Disabled!')
+					else
+						ply:ChatPrint('Jetpack Enabled!')
+					end
+				end
+		end
+	end)
 end
 
 function ENT:PredictedMove( owner , data )
